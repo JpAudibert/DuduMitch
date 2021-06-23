@@ -6,7 +6,7 @@ const App: React.FC = () => {
   return (
     <>
       <Header>
-        <img src={logo} alt="logo" />
+        <img src={logo} alt="Logo" />
       </Header>
     </>
   );
