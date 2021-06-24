@@ -6,11 +6,17 @@ export const Container = styled.main`
 
   video {
     width: 550px;
+    border-radius: 5px;
   }
 
   div {
+    display: flex;
+    flex-direction: column;
     padding: 10px;
-    border: 2px solid black;
     margin: 10px;
+
+    span {
+      font-size: 32px;
+    }
   }
 `;

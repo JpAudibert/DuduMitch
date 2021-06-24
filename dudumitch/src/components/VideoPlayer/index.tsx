@@ -11,14 +11,14 @@ const VideoPlayer: React.FC = () => {
     <Container>
       {stream && (
         <div>
-          <h5>{name || 'Nome de Usuário'}</h5>
+          <span>{name || 'Nome de Usuário'}</span>
           <video playsInline muted ref={myVideo} autoPlay />
         </div>
       )}
 
       {callAccepted && !callEnded && (
         <div>
-          <h5>{call.name || 'Convidado'}</h5>
+          <span>{call.name || 'Convidado'}</span>
           <video playsInline ref={userVideo} autoPlay>
             <track kind="captions" />
           </video>

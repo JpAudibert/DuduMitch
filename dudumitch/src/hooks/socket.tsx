@@ -48,8 +48,6 @@ const SocketProvider: React.FC = ({ children }) => {
   const connectionRef = useRef<Instance>();
 
   useEffect(() => {
-    console.log('carrl');
-
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream: MediaStream) => {

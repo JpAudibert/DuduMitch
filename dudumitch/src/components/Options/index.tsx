@@ -3,7 +3,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useSocket } from '../../hooks/socket';
 
-import { Container } from './styles';
+import { Container, FieldList, Field } from './styles';
 
 const Options: React.FC = ({ children }) => {
   const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } =
@@ -13,28 +13,38 @@ const Options: React.FC = ({ children }) => {
   return (
     <Container>
       <form noValidate autoComplete="off">
-        <div>
-          <h6>Informações de Contato</h6>
-          <input value={name} onChange={e => setName(e.target.value)} />
-          <CopyToClipboard text={me}>
-            <button type="button">Copiar seu ID</button>
-          </CopyToClipboard>
-        </div>
+        <FieldList>
+          <Field>
+            <span>Informações de Contato</span>
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="Seu Nome"
+            />
+            <CopyToClipboard text={me}>
+              <button type="button">Copiar seu ID</button>
+            </CopyToClipboard>
+          </Field>
 
-        <div>
-          <h6>Faça uma ligação</h6>
-          <input value={name} onChange={e => setIdToCall(e.target.value)} />
+          <Field>
+            <span>Faça uma ligação</span>
+            <input
+              value={idToCall}
+              onChange={e => setIdToCall(e.target.value)}
+              placeholder="ID para ligar"
+            />
 
-          {callAccepted && !callEnded ? (
-            <button type="button" onClick={leaveCall}>
-              Desligar
-            </button>
-          ) : (
-            <button type="button" onClick={() => callUser(idToCall)}>
-              Ligar
-            </button>
-          )}
-        </div>
+            {callAccepted && !callEnded ? (
+              <button type="button" onClick={leaveCall}>
+                Desligar
+              </button>
+            ) : (
+              <button type="button" onClick={() => callUser(idToCall)}>
+                Ligar
+              </button>
+            )}
+          </Field>
+        </FieldList>
       </form>
       {children}
     </Container>
