@@ -3,50 +3,59 @@ import React, {
   useRef,
   useEffect,
   useContext,
+  useCallback,
   createContext,
 } from 'react';
 import { io } from 'socket.io-client';
-import Peer, { Instance } from 'simple-peer';
-import { Socket } from 'dgram';
+import Peer, { Instance, SignalData } from 'simple-peer';
 
 interface ISocketContext {
-  stream: MediaStream;
+  stream: MediaStream | undefined;
   me: string;
-  call: any;
+  call: ICall;
   callAccepted: boolean;
   callEnded: boolean;
   name: string;
-  myVideo: Instance;
-  userVideo: Instance;
+  myVideo: any;
+  userVideo: any;
   setName(name: string): void;
   answerCall(): void;
   callUser(id: string): void;
   leaveCall(): void;
 }
 
+interface ICall {
+  isReceivedCall: boolean;
+  from: string;
+  name: string;
+  signal: SignalData;
+}
+
 const SocketContext = createContext<ISocketContext>({} as ISocketContext);
 
-const socket = io('https://doodle-meet.herokuapp.com');
+const socket = io('http://127.0.0.1:5000');
 
-const SocketProvider = ({ children }) => {
+const SocketProvider: React.FC = ({ children }) => {
   const [stream, setStream] = useState<MediaStream>();
   const [me, setMe] = useState('');
-  const [call, setCall] = useState<any>({});
+  const [call, setCall] = useState<ICall>({} as ICall);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState('');
 
-  const myVideo = useRef<Instance>();
-  const userVideo = useRef<Instance>();
+  const myVideo = useRef<any>();
+  const userVideo = useRef<any>();
   const connectionRef = useRef<Instance>();
 
   useEffect(() => {
+    console.log('carrl');
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((currentStream: MediaStream) => {
         setStream(currentStream);
 
-        myVideo.current?.addStream(currentStream);
+        myVideo.current.srcObject = currentStream;
       });
 
     socket.on('me', (id: string) => setMe(id));
@@ -55,7 +64,7 @@ const SocketProvider = ({ children }) => {
     });
   }, []);
 
-  const answerCall = () => {
+  const answerCall = useCallback(() => {
     setCallAccepted(true);
 
     const peer = new Peer({
@@ -69,66 +78,71 @@ const SocketProvider = ({ children }) => {
     });
 
     peer.on('stream', currentStream => {
-      userVideo.current?.addStream(currentStream);
+      myVideo.current.srcObject = currentStream;
     });
 
     peer.signal(call.signal);
 
     connectionRef.current = peer;
-  };
+  }, [call.from, call.signal, stream]);
 
-  const callUser = (id: string) => {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
-
-    peer.on('signal', data => {
-      socket.emit('calluser', {
-        userToCall: id,
-        signalData: data,
-        from: me,
-        name,
+  const callUser = useCallback(
+    (id: string) => {
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream,
       });
-    });
 
-    peer.on('stream', currentStream => {
-      userVideo.current?.addStream(currentStream);
-    });
+      peer.on('signal', data => {
+        socket.emit('calluser', {
+          userToCall: id,
+          signalData: data,
+          from: me,
+          name,
+        });
+      });
 
-    socket.on('callaccepted', signal => {
-      setCallAccepted(true);
+      peer.on('stream', currentStream => {
+        userVideo.current?.addStream(currentStream);
+      });
 
-      peer.signal(signal);
-    });
+      socket.on('callaccepted', signal => {
+        setCallAccepted(true);
 
-    connectionRef.current = peer;
-  };
+        peer.signal(signal);
+      });
 
-  const leaveCall = () => {
+      connectionRef.current = peer;
+    },
+    [me, name, stream],
+  );
+
+  const leaveCall = useCallback(() => {
     setCallEnded(true);
     connectionRef.current?.destroy();
 
     window.location.reload();
-  };
+  }, []);
 
   return (
-    <SocketContext.Provider value={{
-      stream,
-      me,
-      call,
-      callAccepted,
-      callEnded,
-      name,
-      myVideo,
-      userVideo,
-      setName,
-      answerCall,
-      callUser,
-      leaveCall
-    }}
-    >{children}
+    <SocketContext.Provider
+      value={{
+        stream,
+        me,
+        call,
+        callAccepted,
+        callEnded,
+        name,
+        myVideo,
+        userVideo,
+        setName,
+        answerCall,
+        callUser,
+        leaveCall,
+      }}
+    >
+      {children}
     </SocketContext.Provider>
   );
 };

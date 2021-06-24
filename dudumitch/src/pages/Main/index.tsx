@@ -1,13 +1,23 @@
 import React from 'react';
 import logo from '../../assets/duduMitch.svg';
-import { Header } from './styles';
+import { Container, Header } from './styles';
+
+import VideoPlayer from '../../components/VideoPlayer';
+import Options from '../../components/Options';
+import Notifications from '../../components/Notifications';
 
 const App: React.FC = () => {
   return (
     <>
-      <Header>
-        <img src={logo} alt="Logo" />
-      </Header>
+      <Container>
+        <Header>
+          <img src={logo} alt="Logo" />
+        </Header>
+        <VideoPlayer />
+        <Options>
+          <Notifications />
+        </Options>
+      </Container>
     </>
   );
 };
