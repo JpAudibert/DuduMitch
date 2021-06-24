@@ -33,7 +33,7 @@ interface ICall {
 
 const SocketContext = createContext<ISocketContext>({} as ISocketContext);
 
-const socket = io('http://127.0.0.1:5000');
+const socket = io('https://doodle-meet.herokuapp.com');
 
 const SocketProvider: React.FC = ({ children }) => {
   const [stream, setStream] = useState<MediaStream>();
