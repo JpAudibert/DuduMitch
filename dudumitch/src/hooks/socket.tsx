@@ -44,7 +44,7 @@ const SocketProvider: React.FC = ({ children }) => {
 
   const myVideo = useRef<any>();
   const userVideo = useRef<any>();
-  const connectionRef = useRef<Instance>();
+  const connectionRef = useRef<any>();
 
   useEffect(() => {
     navigator.mediaDevices
