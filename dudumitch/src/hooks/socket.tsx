@@ -6,7 +6,7 @@ import React, {
   createContext,
 } from 'react';
 import { io } from 'socket.io-client';
-import Peer, { Instance, SignalData } from 'simple-peer';
+import Peer, { SignalData } from 'simple-peer';
 
 interface ISocketContext {
   stream: MediaStream | undefined;
