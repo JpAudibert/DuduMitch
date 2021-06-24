@@ -3,7 +3,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useSocket } from '../../hooks/socket';
 
-import { Container, FieldList, Field } from './styles';
+import { Container, FieldList, Field, Button } from './styles';
 
 const Options: React.FC = ({ children }) => {
   const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } =
@@ -22,7 +22,7 @@ const Options: React.FC = ({ children }) => {
               placeholder="Seu Nome"
             />
             <CopyToClipboard text={me}>
-              <button type="button">Copiar seu ID</button>
+              <Button type="button">Copiar seu ID</Button>
             </CopyToClipboard>
           </Field>
 
@@ -35,13 +35,17 @@ const Options: React.FC = ({ children }) => {
             />
 
             {callAccepted && !callEnded ? (
-              <button type="button" onClick={leaveCall}>
+              <Button
+                type="button"
+                onClick={leaveCall}
+                callInProgress={callAccepted}
+              >
                 Desligar
-              </button>
+              </Button>
             ) : (
-              <button type="button" onClick={() => callUser(idToCall)}>
+              <Button type="button" onClick={() => callUser(idToCall)}>
                 Ligar
-              </button>
+              </Button>
             )}
           </Field>
         </FieldList>

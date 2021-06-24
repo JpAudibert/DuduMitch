@@ -10,10 +10,12 @@ const Notifications: React.FC = () => {
     <>
       {call.isReceivedCall && !callAccepted && (
         <Container>
-          <h1>{call.name} está ligando</h1>
-          <button type="button" onClick={answerCall}>
-            Atender
-          </button>
+          <div>
+            <span>{call.name} está ligando</span>
+            <button type="button" onClick={answerCall}>
+              Atender
+            </button>
+          </div>
         </Container>
       )}
     </>

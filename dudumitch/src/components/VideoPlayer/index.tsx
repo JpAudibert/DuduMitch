@@ -10,10 +10,12 @@ const VideoPlayer: React.FC = () => {
   return (
     <Container>
       {stream && (
-        <div>
-          <span>{name || 'Nome de Usuário'}</span>
-          <video playsInline muted ref={myVideo} autoPlay />
-        </div>
+        <>
+          <div>
+            <span>{name || 'Nome de Usuário'}</span>
+            <video playsInline muted ref={myVideo} autoPlay />
+          </div>
+        </>
       )}
 
       {callAccepted && !callEnded && (

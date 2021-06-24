@@ -1,20 +1,18 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+interface IButtonProps {
+  callInProgress?: boolean;
+}
 
 export const Container = styled.section`
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
-
-  button {
-    margin-top: 20px;
-  }
 
   span {
     font-size: 32px;
-  }
-
-  form {
-    padding: 20;
   }
 `;
 
@@ -23,7 +21,7 @@ export const FieldList = styled.div`
 
   > div {
     width: 600px;
-    margin: 35px 0;
+    margin: 32px 0;
     padding: 10px 20px;
   }
 `;
@@ -44,13 +42,21 @@ export const Field = styled.div`
   input::-moz-placeholder {
     font-size: 24px;
   }
+`;
 
-  button {
-    background: #3f51b5;
-    color: #fff;
-    font-size: 32px;
-    padding: 8px;
-    border: 0;
-    border-radius: 5px;
-  }
+export const Button = styled.button<IButtonProps>`
+  ${props =>
+    props.callInProgress
+      ? css`
+          background: #db1818;
+        `
+      : css`
+          background: #3f51b5;
+        `};
+  color: #fff;
+  font-size: 32px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+  margin-top: 20px;
 `;

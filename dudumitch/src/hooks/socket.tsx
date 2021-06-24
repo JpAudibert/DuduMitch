@@ -3,7 +3,6 @@ import React, {
   useRef,
   useEffect,
   useContext,
-  useCallback,
   createContext,
 } from 'react';
 import { io } from 'socket.io-client';
@@ -62,7 +61,7 @@ const SocketProvider: React.FC = ({ children }) => {
     });
   }, []);
 
-  const answerCall = useCallback(() => {
+  const answerCall = () => {
     setCallAccepted(true);
 
     const peer = new Peer({
@@ -82,46 +81,43 @@ const SocketProvider: React.FC = ({ children }) => {
     peer.signal(call.signal);
 
     connectionRef.current = peer;
-  }, [call.from, call.signal, stream]);
+  };
 
-  const callUser = useCallback(
-    (id: string) => {
-      const peer = new Peer({
-        initiator: true,
-        trickle: false,
-        stream,
+  const callUser = (id: string) => {
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+    });
+
+    peer.on('signal', data => {
+      socket.emit('calluser', {
+        userToCall: id,
+        signalData: data,
+        from: me,
+        name,
       });
+    });
 
-      peer.on('signal', data => {
-        socket.emit('calluser', {
-          userToCall: id,
-          signalData: data,
-          from: me,
-          name,
-        });
-      });
+    peer.on('stream', currentStream => {
+      userVideo.current.srcObject = currentStream;
+    });
 
-      peer.on('stream', currentStream => {
-        userVideo.current?.addStream(currentStream);
-      });
+    socket.on('callaccepted', signal => {
+      setCallAccepted(true);
 
-      socket.on('callaccepted', signal => {
-        setCallAccepted(true);
+      peer.signal(signal);
+    });
 
-        peer.signal(signal);
-      });
+    connectionRef.current = peer;
+  };
 
-      connectionRef.current = peer;
-    },
-    [me, name, stream],
-  );
-
-  const leaveCall = useCallback(() => {
+  const leaveCall = () => {
     setCallEnded(true);
     connectionRef.current?.destroy();
 
     window.location.reload();
-  }, []);
+  };
 
   return (
     <SocketContext.Provider
