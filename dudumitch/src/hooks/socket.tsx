@@ -75,7 +75,7 @@ const SocketProvider: React.FC = ({ children }) => {
     });
 
     peer.on('stream', currentStream => {
-      myVideo.current.srcObject = currentStream;
+      userVideo.current.srcObject = currentStream;
     });
 
     peer.signal(call.signal);
